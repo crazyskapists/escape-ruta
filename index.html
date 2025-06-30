@@ -1,101 +1,297 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ruta Escape Europa</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="estilos.css">
-  <script defer src="notificaciones.js"></script>
-  <style>
-    :root {
-      --color-primario: #2E294E;
-      --color-secundario: #1B998B;
-      --color-texto: #FFFFFF;
-      --color-acento: #6EC2E8;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: var(--color-primario);
-      color: var(--color-texto);
-      padding: 1.5rem;
-    }
-
-    h1 {
-      color: var(--color-acento);
-      text-align: center;
-    }
-
-    .dia {
-      margin: 2rem 0;
-      padding: 1rem;
-      background-color: rgba(255, 255, 255, 0.05);
-      border-radius: 1rem;
-      box-shadow: 0 0 10px rgba(110, 194, 232, 0.3);
-    }
-
-    .juego h3 {
-      color: var(--color-secundario);
-    }
-
-    img {
-      width: 100%;
-      max-width: 400px;
-      border-radius: 0.5rem;
-      margin-top: 0.5rem;
-    }
-
-    button {
-      display: block;
-      margin: 2rem auto;
-      padding: 0.8rem 1.5rem;
-      font-size: 1rem;
-      background-color: var(--color-acento);
-      color: var(--color-primario);
-      border: none;
-      border-radius: 2rem;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background-color: #94d6f5;
-    }
-  </style>
+<meta charset="UTF-8" />
+<link rel="manifest" href="manifest.json" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mis Escape Rooms - Calendario y Notificaciones</title>
+<style>
+  /* Estilo oscuro con acento azul Stitch */
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #121212;
+    color: #eee;
+    margin: 0;
+    padding: 0 1rem;
+  }
+  header {
+    background-color: #121212;
+    padding: 1rem 0;
+    text-align: center;
+    border-bottom: 1px solid #0a84ff;
+  }
+  h1 {
+    margin: 0;
+    color: #0a84ff;
+    font-weight: 700;
+  }
+  #filtros {
+    margin: 1rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+  select, input[type="date"], button {
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #0a84ff;
+    background: #181818;
+    color: #eee;
+    font-size: 1rem;
+    min-width: 150px;
+    transition: 0.3s;
+  }
+  select:focus, input[type="date"]:focus, button:hover {
+    border-color: #40a9ff;
+    outline: none;
+  }
+  #juegos-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .juego-card {
+    background: #1f1f1f;
+    border-radius: 12px;
+    box-shadow: 0 0 12px #0a84ff44;
+    padding: 1rem;
+    transition: box-shadow 0.3s;
+    cursor: pointer;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .juego-card:hover {
+    box-shadow: 0 0 20px #0a84ffbb;
+  }
+  .juego-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+    box-shadow: 0 0 10px #0a84ffaa;
+  }
+  .juego-info {
+    flex: 1;
+  }
+  .juego-info h2 {
+    margin: 0 0 0.2rem 0;
+    color: #40a9ff;
+  }
+  .juego-info p {
+    margin: 0.1rem 0;
+    font-size: 0.9rem;
+    line-height: 1.2rem;
+  }
+  .no-juegos {
+    text-align: center;
+    font-style: italic;
+    margin: 2rem 0;
+    color: #777;
+  }
+</style>
 </head>
 <body>
-  <h1>📅 Ruta Escape Europa - CrazySkapists</h1>
 
-  <section class="dia">
-    <h2>2 de agosto – Berlín</h2>
-    <article class="juego">
-      <h3>The Vault</h3>
-      <p><strong>Hora:</strong> 14:00</p>
-      <p><strong>Lugar:</strong> Alexanderplatz 3, Berlín</p>
-      <img src="imagenes/juego1.jpg" alt="Confirmación de reserva">
-    </article>
-  </section>
+<header>
+  <h1>Calendario Escape Rooms</h1>
+</header>
 
-  <section class="dia">
-    <h2>3 de agosto – Praga</h2>
-    <article class="juego">
-      <h3>Mindfall</h3>
-      <p><strong>Hora:</strong> 17:30</p>
-      <p><strong>Lugar:</strong> Karlovo náměstí 10, Praga</p>
-      <img src="imagenes/juego2.jpg" alt="Confirmación de reserva">
-    </article>
-  </section>
+<section id="filtros">
+  <select id="paisFiltro" aria-label="Filtrar por país">
+    <option value="">-- Filtrar por país --</option>
+    <option value="España">España</option>
+    <option value="Francia">Francia</option>
+    <option value="Portugal">Portugal</option>
+    <option value="Italia">Italia</option>
+    <option value="Alemania">Alemania</option>
+    <!-- Añade más países aquí -->
+  </select>
 
-  <button onclick="solicitarPermiso()">🔔 Activar notificaciones</button>
+  <input type="date" id="fechaFiltro" aria-label="Filtrar por fecha" />
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(() => console.log('✅ Service Worker registrado'))
-        .catch(err => console.error('❌ Error SW:', err));
+  <button id="filtrarBtn">Filtrar</button>
+  <button id="limpiarBtn">Limpiar filtros</button>
+</section>
+
+<div id="juegos-container" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+  // Datos ejemplo de juegos
+  const juegos = [
+    {
+      id: 1,
+      nombre: "El Rescate",
+      fecha: "2025-07-15",
+      hora: "17:00",
+      pais: "España",
+      precioTotal: 80,
+      precioJugador: 20,
+      imagen: "imagenes/rescate.jpg",
+      descripcion: "Un escape room lleno de acción y misterio. Tienes 60 minutos para rescatar al rehén."
+    },
+    {
+      id: 2,
+      nombre: "La Cripta Secreta",
+      fecha: "2025-07-16",
+      hora: "15:30",
+      pais: "Francia",
+      precioTotal: 100,
+      precioJugador: 25,
+      imagen: "imagenes/cripta.jpg",
+      descripcion: "Explora la cripta y descubre sus secretos antes que el tiempo se agote."
+    },
+    {
+      id: 3,
+      nombre: "El Enigma de Lisboa",
+      fecha: "2025-07-17",
+      hora: "19:00",
+      pais: "Portugal",
+      precioTotal: 120,
+      precioJugador: 30,
+      imagen: "imagenes/enigma.jpg",
+      descripcion: "Un reto que pondrá a prueba tu ingenio en la capital portuguesa."
     }
-  </script>
+  ];
+
+  const juegosContainer = document.getElementById("juegos-container");
+  const paisFiltro = document.getElementById("paisFiltro");
+  const fechaFiltro = document.getElementById("fechaFiltro");
+  const filtrarBtn = document.getElementById("filtrarBtn");
+  const limpiarBtn = document.getElementById("limpiarBtn");
+
+  // Mostrar juegos en pantalla
+  function mostrarJuegos(lista) {
+    juegosContainer.innerHTML = "";
+    if (lista.length === 0) {
+      juegosContainer.innerHTML = '<p class="no-juegos">No hay juegos con esos filtros.</p>';
+      return;
+    }
+    lista.forEach(juego => {
+      const div = document.createElement("div");
+      div.className = "juego-card";
+      div.innerHTML = `
+        <img class="juego-img" src="${juego.imagen}" alt="Imagen de ${juego.nombre}" />
+        <div class="juego-info">
+          <h2>${juego.nombre}</h2>
+          <p><strong>Fecha:</strong> ${juego.fecha} <strong>Hora:</strong> ${juego.hora}</p>
+          <p><strong>País:</strong> ${juego.pais}</p>
+          <p><strong>Precio Total:</strong> ${juego.precioTotal}€ | <strong>Precio por Jugador:</strong> ${juego.precioJugador}€</p>
+          <p>${juego.descripcion}</p>
+        </div>
+      `;
+      juegosContainer.appendChild(div);
+    });
+  }
+
+  filtrarBtn.addEventListener("click", () => {
+    const pais = paisFiltro.value;
+    const fecha = fechaFiltro.value;
+
+    let filtrados = juegos;
+
+    if (pais) filtrados = filtrados.filter(j => j.pais === pais);
+    if (fecha) filtrados = filtrados.filter(j => j.fecha === fecha);
+
+    mostrarJuegos(filtrados);
+  });
+
+  limpiarBtn.addEventListener("click", () => {
+    paisFiltro.value = "";
+    fechaFiltro.value = "";
+    mostrarJuegos(juegos);
+  });
+
+  // Mostrar todos los juegos al inicio
+  mostrarJuegos(juegos);
+
+  // ----------- NOTIFICACIONES -----------
+
+  async function solicitarPermisoNotificaciones() {
+    if (!("Notification" in window)) {
+      alert("Tu navegador no soporta notificaciones.");
+      return false;
+    }
+    let permiso = Notification.permission;
+    if (permiso === "default") {
+      permiso = await Notification.requestPermission();
+    }
+    return permiso === "granted";
+  }
+
+  function programarNotificaciones(juegos) {
+    const ahora = new Date();
+
+    juegos.forEach(juego => {
+      const fechaHora = new Date(juego.fecha + "T" + juego.hora + ":00");
+      const notiTiempo = fechaHora.getTime() - 60 * 60 * 1000; // 1 hora antes
+      const diff = notiTiempo - ahora.getTime();
+
+      if (diff > 0) {
+        setTimeout(() => {
+          mostrarNotificacion(juego);
+        }, diff);
+        console.log(`Notificación programada para "${juego.nombre}" en ${Math.round(diff / 60000)} minutos.`);
+      }
+    });
+  }
+
+  function mostrarNotificacion(juego) {
+    const opciones = {
+      body: `El juego "${juego.nombre}" empieza en 1 hora. Toca para ver detalles.`,
+      icon: juego.imagen || "imagenes/default-icon.png",
+      badge: juego.imagen || "imagenes/default-icon.png",
+      vibrate: [200, 100, 200],
+      data: { idJuego: juego.id }
+    };
+
+    const noti = new Notification("Recordatorio Escape Room", opciones);
+    noti.onclick = event => {
+      event.preventDefault();
+      window.focus();
+      window.location.href = window.location.origin + window.location.pathname + `?juego=${juego.id}`;
+      noti.close();
+    };
+  }
+
+  function obtenerParametroURL(nombre) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(nombre);
+  }
+
+  function mostrarJuegoSolo(id) {
+    const juego = juegos.find(j => j.id == id);
+    if (juego) {
+      mostrarJuegos([juego]);
+    } else {
+      juegosContainer.innerHTML = `<p class="no-juegos">No se encontró el juego solicitado.</p>`;
+    }
+  }
+
+  (async () => {
+    const permiso = await solicitarPermisoNotificaciones();
+
+    const juegoId = obtenerParametroURL("juego");
+    if (juegoId) {
+      mostrarJuegoSolo(juegoId);
+    } else {
+      mostrarJuegos(juegos);
+      if (permiso) programarNotificaciones(juegos);
+    }
+  })();
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').then(reg => {
+        console.log('Service Worker registrado con éxito:', reg.scope);
+      }).catch(err => {
+        console.log('Error registrando Service Worker:', err);
+      });
+    });
+  }
+</script>
+
 </body>
 </html>
