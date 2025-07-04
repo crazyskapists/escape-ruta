@@ -1,17 +1,4 @@
-// Función para pedir permiso
-function solicitarPermiso() {
-  Notification.requestPermission().then(permiso => {
-    if (permiso === 'granted') {
-      localStorage.setItem('notificaciones_activadas', 'true');
-      programarNotificaciones();
-    }
-  });
-}
-
-// Función para programar las notificaciones locales
-function programarNotificaciones() {
-  const juegos = [
-    { titulo: 'Dream 😴', hora: '23:57', fecha: '2025-06-30' },
+{ titulo: 'Dream 😴', hora: '22:20', fecha: '2025-06-30' },
     { titulo: 'Haunted Dinner', hora: '12:15', fecha: '2025-08-28' },
     { titulo: 'Mad Tea Party', hora: '13:30', fecha: '2025-08-28' },
     { titulo: 'Cyber Cube', hora: '22:00', fecha: '2025-08-28' },
@@ -69,84 +56,16 @@ function programarNotificaciones() {
     { titulo: 'The Dome', hora: '11:30', fecha: '2025-09-11' },
     { titulo: 'The Alchemist', hora: '16:00', fecha: '2025-09-11' },
     { titulo: 'Botanist Manor', hora: '22:00', fecha: '2025-09-11' },
-  ];
 
-  const ahora = new Date();
+    vapidKey: 'BNf35iKHn9Zvu0KuDYPAv_TYPnuVmfwwqZonIZ7lK-Uw-vtzygUNmLrlDDDDWCiI5sn9wbv57PyqZHAPnoIN83E'
 
-  juegos.forEach(juego => {
-    if (!juego.fecha || !juego.hora) return;
-
-    const juegoHora = new Date(`${juego.fecha}T${juego.hora}:00`);
-    const notiHora = new Date(juegoHora.getTime() - 60 * 60 * 1000);
-    const tiempoRestante = notiHora.getTime() - ahora.getTime();
-
-    if (tiempoRestante > 0 && tiempoRestante < 10 * 24 * 60 * 60 * 1000) {
-      setTimeout(() => {
-        new Notification(`🚨​¡Ey equipo, atentos!🚨​`, {
-          body: `Tenéis ${juego.titulo} en 1 hora 🕒, no lleguéis tarde, saludos de Stitch. 💙​`,
-          icon: 'imagenes/logo.png'
-        });
-      }, tiempoRestante);
-      console.log(`⏰ Notificación programada para ${juego.titulo} a las ${notiHora}`);
-    } else {
-      console.log(`❌ No se programa ${juego.titulo}, ya pasó o es muy lejana.`);
-    }
-  });
-}
-
-// Evento para cargar el DOM
-document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('btnNotificaciones');
-
-  if (btn) {
-    btn.addEventListener('click', solicitarPermiso);
-  }
-
-  if (Notification.permission === 'granted' &&
-      localStorage.getItem('notificaciones_activadas') === 'true') {
-    programarNotificaciones();
-  }
-});
-
-// Configurar Firebase con tu config
-const firebaseConfig = {
+    
+    firebase.initializeApp({
   apiKey: "AIzaSyBw1GKqP2m3QJxlEnolzrUjJ9w3d2ta9jA",
   authDomain: "europita-465eb.firebaseapp.com",
   projectId: "europita-465eb",
-  storageBucket: "europita-465eb.appspot.com", // Asegúrate que termina en .appspot.com
+  storageBucket: "europita-465eb.firebasestorage.app",
   messagingSenderId: "458801176847",
   appId: "1:458801176847:web:01280c38b419de5d3c5e7a",
   measurementId: "G-WYHDXMGTR6"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const messaging = firebase.messaging();
-
-// Función para pedir permiso y obtener token
-async function pedirPermisoFirebase() {
-  try {
-    // Pedir permiso para notificaciones (si no está dado)
-    const permiso = await Notification.requestPermission();
-    if (permiso !== 'granted') {
-      console.log('Permiso para notificaciones denegado');
-      return;
-    }
-    // Obtener token para Firebase Cloud Messaging
-    const token = await messaging.getToken({
-      vapidKey: 'BNf35iKHn9Zvu0KuDYPAv_TYPnuVmfwwqZonIZ7lK-Uw-vtzygUNmLrlDDDDWCiI5sn9wbv57PyqZHAPnoIN83E' // Debes poner tu propia clave VAPID de Firebase
-    });
-    console.log('Token FCM:', token);
-
-    // Aquí puedes enviar el token a tu backend o guardarlo localmente para enviar notificaciones
-
-  } catch (error) {
-    console.error('Error obteniendo token Firebase Messaging:', error);
-  }
-}
-
-// Listener para mensajes cuando la web está en primer plano
-messaging.onMessage(payload => {
-  console.log('Mensaje recibido en primer plano: ', payload);
-  // Aquí puedes mostrar notificaciones custom si quieres
 });
